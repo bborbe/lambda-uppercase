@@ -1,27 +1,25 @@
 package main
 
 import (
+	"context"
 	"net/http"
+	"strings"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-type Response struct {
-	IsBase64Encoded bool              `json:"isBase64Encoded"`
-	StatusCode      int               `json:"statusCode"`
-	Header          map[string]string `json:"headers"`
-	Body            interface{}       `json:"body"`
+type Request struct {
+	Name string `json:"name"`
 }
 
-func hello() (Response, error) {
-	return Response{
-		IsBase64Encoded: false,
-		StatusCode:      http.StatusOK,
-		Header:          map[string]string{},
-		Body:            "Hello World",
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       strings.ToUpper(req.Body),
 	}, nil
 }
 
 func main() {
-	lambda.Start(hello)
+	lambda.Start(handler)
 }
