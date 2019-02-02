@@ -1,18 +1,27 @@
 package main
 
 import (
-	"context"
-	"log"
-	"strings"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func handler(ctx context.Context, input string) (string, error) {
-	log.Printf("handle requtest for %s", input)
-	return strings.ToUpper(input), nil
+type Response struct {
+	IsBase64Encoded bool              `json:"isBase64Encoded"`
+	StatusCode      int               `json:"statusCode"`
+	Header          map[string]string `json:"headers"`
+	Body            interface{}       `json:"body"`
+}
+
+func hello() (Response, error) {
+	return Response{
+		IsBase64Encoded: false,
+		StatusCode:      http.StatusOK,
+		Header:          map[string]string{},
+		Body:            "Hello World",
+	}, nil
 }
 
 func main() {
-	lambda.Start(handler)
+	lambda.Start(hello)
 }
